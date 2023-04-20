@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Learning 4Dvar</title>
+    <script src="https://kit.fontawesome.com/ebc2764dcb.js" crossorigin="anonymous"></script>
+    <meta name="description" content="Learning 4Dvar directly from observations.">
+    <meta name="keywords" content="4dvar,deep learning,data assimilation">
+    <meta name="author" content="Arthur Filoche">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css" type="text/css">
+  </head>
+  <header>
+    
+    <h1 class="Title">Learning variational data assimilation directly from observations.</h1>
+    <h2><i>Application to geophysical motion estimation.</i></h2>
+    <h4>Arthur Filoche, Dominique Bereziat, Hugo Riffaud de Turckheim.</h4>
+   
+    
+    <nav >
+      
+      <ul class="right_menu"> 
+        <li class="headerli_code"><a href="contact.html">Get the code</a></li>
+      </ul>
+      
+    </nav>
+  </header>
+  <body>
+    <!--<h3>Résultats</h3>
+    <p>Les résultats obtenus sont présentés dans le document suivant : 
+        <a href="https://hal.sorbonne-universite.fr/hal-03863390/document">Learning variational data assimilation directly from observations.</a>
+    </p>-->
+
+    <h2>
+        Overview of methods
+    </h2>
+
+    <p>
+        Quisque iaculis ante porta lorem gravida placerat. Donec id ligula vitae leo sagittis porta. Nullam eu bibendum elit, et ornare elit. Ut cursus imperdiet nisi dignissim lobortis. Ut non turpis diam. Aliquam accumsan blandit turpis id maximus. Vestibulum sit amet commodo arcu, vel dictum tellus. Praesent non molestie nisi. Duis rhoncus tortor ante. Nulla lobortis velit id justo mattis, et dictum ipsum interdum. Ut in congue enim. Nam a varius mi, non tristique tortor.
+
+
+    </p>
+
+    <div class="Section">
+        <div class="section_header">
+            <div class="section_left_title">
+                <div class="section_title" id="Title_1" mode="cheat">
+                    <a id="title_mode_etiquette">Perfect-nn</a>
+                    <i class="fa-solid fa-caret-down"></i>
+                </div>
+                
+                <div class="menu_deroulant">
+                    <div class="menu_mode">
+                        <p id="mode_1" mode="4d">4Dvar-nn</p>
+                        <p id="mode_2" mode="4dB">4Dvar-B-nn</p>
+                        <p id="mode_3" mode="E2E">End-to-End</p>
+                    </div>
+                    
+                </div>
+                
+            </div>
+            <div class="section_right_title">
+                <a id="cheat_assi_0" class="selected">assimilation</a>
+                <a id="cheat_assi_1" class="unselected">Forecast</a>
+            </div>
+            <div class="section_right_title">
+                <a class="selected" >noise</a>
+                <a id="cheat_noise_0">0.0</a>
+                <a id="cheat_noise_1" class="selected">1.5</a>
+                <a id="cheat_noise_3">3.0</a>
+                <a id="cheat_noise_4">4.5</a>
+                <a id="cheat_noise_6">6.0</a>
+            </div>
+        </div>
+
+        <div class="single_images_revealer">
+            <div class="single_revealer_button">
+                <a>Single exemple preview</a>
+                <div><i class="fa-solid fa-chevron-up"></i></div>
+            </div>
+            <div class="single_images">
+            </div>
+        </div>
+
+        <div class="method_overview">
+            <img src="notebooks_demo/Algorithm/Advection/plots/assim_train_cheat_1.png" alt="recap" class="standard_pic">
+            <img src="notebooks_demo/Algorithm/Advection/plots/assim_histo_cheat_1.png" alt="recap" class="standard_pic">
+            <img src="notebooks_demo/Algorithm/Advection/plots/assim_recap_cheat_1.png" alt="recap" class="standard_pic">
+        </div>
+
+    </div>
+
+    
+
+    <h2>
+        Comparison of methods
+    </h2>
+
+    <div class="Section">
+        <div class="section_header">
+            
+
+            <div class="section_right_title">
+                <a id="cheat_assi_1_0" class="selected">assimilation</a>
+                <a id="cheat_assi_1_1" class="unselected">Forecast</a>
+            </div>
+            <div class="section_right_title">
+                <a class="selected">noise</a>
+                <a id="cheat_noise_1_0">0.0</a>
+                <a id="cheat_noise_1_1" class="selected">1.5</a>
+                <a id="cheat_noise_1_3">3.0</a>
+                <a id="cheat_noise_1_4">4.5</a>
+                <a id="cheat_noise_1_6">6.0</a>
+            </div>
+        </div>
+
+        <div class="single_images_revealer">
+            <div class="single_revealer_button">
+                <a>Results for a single image</a>
+                <div><i class="fa-solid fa-chevron-up"></i></div>
+            </div>
+            <div class="single_images">
+            </div>
+        </div>
+
+        <div class="method_overview">
+            <img src="notebooks_demo/Algorithm/Advection/plots/assim_Bench6_1.png" alt="recap" class="standard_pic">
+            <img src="notebooks_demo/Algorithm/Advection/plots/assim_Bench4_1.png" alt="recap" class="standard_pic">
+        </div>
+
+    </div>
+
+    
+
+    
+  </body>
+
+  <script>
+    var single_revealer_button = document.getElementsByClassName("single_revealer_button")[0];
+    var single_images_revealer = document.getElementsByClassName("single_images_revealer")[0];
+    var single_images = document.getElementsByClassName("single_images")[0];
+    var single_revealer_button_text = document.getElementsByClassName("single_revealer_button")[0].getElementsByTagName("a")[0];
+    var single_revealer_button_icon = document.getElementsByClassName("single_revealer_button")[0].getElementsByTagName("div")[0].getElementsByTagName("i")[0];
+    const plots_path="notebooks_demo/Algorithm/Advection/plots/"
+    var single_images_revealer_open = false;
+    var forecast_cheat = false;
+    var forecast_cheat_1 = false;
+    var noise_cheat=1;
+    var forecast_cheat_button_0=document.getElementById("cheat_assi_0");
+    var forecast_cheat_button_1=document.getElementById("cheat_assi_1");
+    var forecast_cheat_button_1_0=document.getElementById("cheat_assi_1_0");
+    var forecast_cheat_button_1_1=document.getElementById("cheat_assi_1_1");
+    var mode="cheat";
+    var menu_deroulant=document.getElementById("Title_1");
+    var titre_menu_deroulant=document.getElementById("title_mode_etiquette");
+    var mode_1=document.getElementById("mode_1");
+    var mode_2=document.getElementById("mode_2");
+    var mode_3=document.getElementById("mode_3");
+
+    function swith_menu_deroulant(node){
+        
+        let tmp_mode=mode;
+        mode=node.getAttribute("mode");
+        node.setAttribute("mode",tmp_mode);
+        switch(tmp_mode){
+            case "cheat":
+                node.innerHTML="Perfect-nn";
+                break;
+            case "4d":
+                node.innerHTML="4Dvar-nn";
+                break;
+            case "4dB":
+                node.innerHTML="4Dvar-B-nn";
+                break;
+            case "E2E":
+                node.innerHTML="End-to-End";
+                break;
+        }
+
+        switch(mode){
+            case "cheat":
+            titre_menu_deroulant.innerHTML="Perfect-nn";
+                break;
+            case "4d":
+            titre_menu_deroulant.innerHTML="4Dvar-nn";
+                break;
+            case "4dB":
+            titre_menu_deroulant.innerHTML="4Dvar-B-nn";
+                break;
+            case "E2E":
+                titre_menu_deroulant.innerHTML="End-to-End";
+                break;
+        }
+
+        update_images_method_overview()
+        
+    }
+
+    function update_images_method_overview(){
+        let node=document.getElementsByClassName("method_overview")[0];
+        while(node.firstChild){
+            node.removeChild(node.firstChild);
+        }
+        let mode_prev;
+        if (forecast_cheat){
+            mode_prev="forecast";
+        }else{
+            mode_prev="assim";
+        }
+        ajout_image(node,plots_path+mode_prev+"_train_"+mode+"_"+noise_cheat+".png")
+        ajout_image(node,plots_path+mode_prev+"_histo_"+mode+"_"+noise_cheat+".png")
+        ajout_image(node,plots_path+mode_prev+"_recap_"+mode+"_"+noise_cheat+".png")
+
+    }
+
+    function update_images_method_overview_g(){
+        let node=document.getElementsByClassName("method_overview")[1];
+        while(node.firstChild){
+            node.removeChild(node.firstChild);
+        }
+        let mode_prev;
+        if (forecast_cheat_1){
+            mode_prev="forecast";
+        }else{
+            mode_prev="assim";
+        }
+        ajout_image(node,plots_path+mode_prev+"_Bench6_"+noise_cheat+".png")
+        ajout_image(node,plots_path+mode_prev+"_Bench4_"+noise_cheat+".png")
+
+    }
+
+    mode_1.addEventListener("click", function(){
+        swith_menu_deroulant(mode_1)
+        fermeture_images_reaveler();
+    });
+
+    mode_2.addEventListener("click", function(){
+        swith_menu_deroulant(mode_2)
+        fermeture_images_reaveler();
+    });
+
+    mode_3.addEventListener("click", function(){
+        swith_menu_deroulant(mode_3)
+        fermeture_images_reaveler();
+    });
+
+    
+
+    var noise_cheat_button_0=document.getElementById("cheat_noise_0");
+    var noise_cheat_button_1=document.getElementById("cheat_noise_1");
+    var noise_cheat_button_3=document.getElementById("cheat_noise_3");
+    var noise_cheat_button_4=document.getElementById("cheat_noise_4");
+    var noise_cheat_button_6=document.getElementById("cheat_noise_6");
+
+    noise_cheat_button_0.addEventListener("click", function(){
+        noise_cheat=0;
+        fermeture_images_reaveler();
+        noise_cheat_button_0.classList.add("selected");
+        noise_cheat_button_1.classList.remove("selected");
+        noise_cheat_button_3.classList.remove("selected");
+        noise_cheat_button_4.classList.remove("selected");
+        noise_cheat_button_6.classList.remove("selected");
+        update_images_method_overview()
+    });
+
+    noise_cheat_button_1.addEventListener("click", function(){
+        noise_cheat=1;
+        fermeture_images_reaveler();
+        noise_cheat_button_0.classList.remove("selected");
+        noise_cheat_button_1.classList.add("selected");
+        noise_cheat_button_3.classList.remove("selected");
+        noise_cheat_button_4.classList.remove("selected");
+        noise_cheat_button_6.classList.remove("selected");
+        update_images_method_overview()
+    });
+
+    noise_cheat_button_3.addEventListener("click", function(){
+        noise_cheat=3;
+        fermeture_images_reaveler();
+        noise_cheat_button_0.classList.remove("selected");
+        noise_cheat_button_1.classList.remove("selected");
+        noise_cheat_button_3.classList.add("selected");
+        noise_cheat_button_4.classList.remove("selected");
+        noise_cheat_button_6.classList.remove("selected");
+        update_images_method_overview()
+    });
+
+    noise_cheat_button_4.addEventListener("click", function(){
+        noise_cheat=4;
+        fermeture_images_reaveler();
+        noise_cheat_button_0.classList.remove("selected");
+        noise_cheat_button_1.classList.remove("selected");
+        noise_cheat_button_3.classList.remove("selected");
+        noise_cheat_button_4.classList.add("selected");
+        noise_cheat_button_6.classList.remove("selected");
+        update_images_method_overview()
+    });
+
+
+    noise_cheat_button_6.addEventListener("click", function(){
+        noise_cheat=6;
+        fermeture_images_reaveler();
+        noise_cheat_button_0.classList.remove("selected");
+        noise_cheat_button_1.classList.remove("selected");
+        noise_cheat_button_3.classList.remove("selected");
+        noise_cheat_button_4.classList.remove("selected");
+        noise_cheat_button_6.classList.add("selected");
+        update_images_method_overview()
+    });
+
+    
+    function ajout_image(node,image_path){
+        var image = document.createElement("img");
+        image.classList.add("standard_pic");
+        image.src = image_path;
+        node.appendChild(image);
+    }
+
+    function ouverture_images_reaveler(trigger,dest,id){
+        
+        if (!single_images_revealer_open){
+            
+            single_revealer_button_icon.classList.remove("fa-chevron-up");
+            single_revealer_button_icon.classList.add("fa-chevron-down");
+            single_images_revealer_open = true;
+            suff=".png";
+            let mode_prev;
+            if (forecast_cheat){
+                mode_prev="forecast"
+            }else{
+                mode_prev="assim"
+            }
+            
+            
+            ajout_image(dest,plots_path+mode_prev+"_in_"+mode+"_"+id+suff);
+            ajout_image(dest,plots_path+mode_prev+"_xt_"+mode+"_"+id+suff);
+            ajout_image(dest,plots_path+mode_prev+"_xp_"+mode+"_"+id+suff);
+            ajout_image(dest,plots_path+mode_prev+"_xe_"+mode+"_"+id+suff);
+            ajout_image(dest,plots_path+mode_prev+"_wt_"+mode+"_"+id+suff);
+            ajout_image(dest,plots_path+mode_prev+"_wp_"+mode+"_"+id+suff);
+            ajout_image(dest,plots_path+mode_prev+"_we_"+mode+"_"+id+suff);
+        }
+    }
+
+    function fermeture_images_reaveler(){
+        if (single_images_revealer_open){
+            //retirer tous les fils du single_images
+            while (single_images.firstChild) {
+                single_images.removeChild(single_images.firstChild);
+            }
+
+
+            single_revealer_button_icon.classList.remove("fa-chevron-down");
+            single_revealer_button_icon.classList.add("fa-chevron-up");
+            single_images_revealer_open = false;
+        }
+    }
+    forecast_cheat_button_0.addEventListener("click", function(){
+        if(forecast_cheat){
+            fermeture_images_reaveler();
+            forecast_cheat_button_1.classList.remove("selected");
+            forecast_cheat_button_1.classList.add("unselected");
+            forecast_cheat_button_0.classList.remove("unselected");
+            forecast_cheat_button_0.classList.add("selected");
+            forecast_cheat=false;
+            update_images_method_overview()
+            
+
+
+
+        }
+    });
+
+    forecast_cheat_button_1.addEventListener("click", function(){
+        if(!forecast_cheat){
+            forecast_cheat_button_0.classList.remove("selected");
+            forecast_cheat_button_0.classList.add("unselected");
+            forecast_cheat_button_1.classList.remove("unselected");
+            forecast_cheat_button_1.classList.add("selected");
+            forecast_cheat=true;
+            fermeture_images_reaveler();
+            update_images_method_overview()
+        }
+    });
+
+    forecast_cheat_button_1_0.addEventListener("click", function(){
+        if(forecast_cheat_1){
+            fermeture_images_reaveler();
+            forecast_cheat_button_1_1.classList.remove("selected");
+            forecast_cheat_button_1_1.classList.add("unselected");
+            forecast_cheat_button_1_0.classList.remove("unselected");
+            forecast_cheat_button_1_0.classList.add("selected");
+            forecast_cheat_1=false;
+            update_images_method_overview_g()
+            
+
+
+
+        }
+    });
+
+    forecast_cheat_button_1_1.addEventListener("click", function(){
+        if(!forecast_cheat_1){
+            forecast_cheat_button_1_0.classList.remove("selected");
+            forecast_cheat_button_1_0.classList.add("unselected");
+            forecast_cheat_button_1_1.classList.remove("unselected");
+            forecast_cheat_button_1_1.classList.add("selected");
+            forecast_cheat_1=true;
+            fermeture_images_reaveler();
+            update_images_method_overview_g()
+        }
+    });
+
+    single_revealer_button.addEventListener("click", function(){
+        if(single_images_revealer_open){
+            fermeture_images_reaveler();
+        }else{
+            let trigger=document.getElementsByClassName("single_revealer_button")[0].getElementsByTagName("a")[0];
+            let dest=document.getElementsByClassName("single_images")[0];
+            ouverture_images_reaveler(trigger,dest,noise_cheat);
+        }
+    });
+
+
+    var noise_cheat_button_1_0=document.getElementById("cheat_noise_1_0");
+    var noise_cheat_button_1_1=document.getElementById("cheat_noise_1_1");
+    var noise_cheat_button_1_3=document.getElementById("cheat_noise_1_3");
+    var noise_cheat_button_1_4=document.getElementById("cheat_noise_1_4");
+    var noise_cheat_button_1_6=document.getElementById("cheat_noise_1_6");
+
+    noise_cheat_button_1_0.addEventListener("click", function(){
+        noise_cheat=0;
+        fermeture_images_reaveler();
+        noise_cheat_button_1_0.classList.add("selected");
+        noise_cheat_button_1_1.classList.remove("selected");
+        noise_cheat_button_1_3.classList.remove("selected");
+        noise_cheat_button_1_4.classList.remove("selected");
+        noise_cheat_button_1_6.classList.remove("selected");
+        update_images_method_overview_g()
+    });
+
+    noise_cheat_button_1_1.addEventListener("click", function(){
+        noise_cheat=1;
+        fermeture_images_reaveler();
+        noise_cheat_button_1_0.classList.remove("selected");
+        noise_cheat_button_1_1.classList.add("selected");
+        noise_cheat_button_1_3.classList.remove("selected");
+        noise_cheat_button_1_4.classList.remove("selected");
+        noise_cheat_button_1_6.classList.remove("selected");
+        update_images_method_overview_g()
+    });
+
+    noise_cheat_button_1_3.addEventListener("click", function(){
+        noise_cheat=3;
+        fermeture_images_reaveler();
+        noise_cheat_button_1_0.classList.remove("selected");
+        noise_cheat_button_1_1.classList.remove("selected");
+        noise_cheat_button_1_3.classList.add("selected");
+        noise_cheat_button_1_4.classList.remove("selected");
+        noise_cheat_button_1_6.classList.remove("selected");
+        update_images_method_overview_g()
+    });
+
+    noise_cheat_button_1_4.addEventListener("click", function(){
+        noise_cheat=4;
+        fermeture_images_reaveler();
+        noise_cheat_button_1_0.classList.remove("selected");
+        noise_cheat_button_1_1.classList.remove("selected");
+        noise_cheat_button_1_3.classList.remove("selected");
+        noise_cheat_button_1_4.classList.add("selected");
+        noise_cheat_button_1_6.classList.remove("selected");
+        update_images_method_overview_g()
+    });
+
+
+    noise_cheat_button_1_6.addEventListener("click", function(){
+        noise_cheat=6;
+        fermeture_images_reaveler();
+        noise_cheat_button_1_0.classList.remove("selected");
+        noise_cheat_button_1_1.classList.remove("selected");
+        noise_cheat_button_1_3.classList.remove("selected");
+        noise_cheat_button_1_4.classList.remove("selected");
+        noise_cheat_button_1_6.classList.add("selected");
+        update_images_method_overview_g()
+    });
+
+
+
+  </script>
+
+</html>
