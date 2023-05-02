@@ -82,6 +82,8 @@
             <img src="plots/assim_train_cheat_1.png" alt="recap" class="standard_pic">
             <img src="plots/assim_histo_cheat_1.png" alt="recap" class="standard_pic">
             <img src="plots/assim_recap_cheat_1.png" alt="recap" class="standard_pic">
+            <div>Benchmarks avec 1k exemples</div>
+            <img src="plots_prec/assim_recap_cheat_1.png" alt="recap" class="standard_pic">
         </div>
 
     </div>
@@ -121,7 +123,10 @@
 
         <div class="method_overview">
             <img src="plots/assim_Bench6_1.png" alt="recap" class="standard_pic">
+            <img src="plot_prec/assim_Bench6_1.png" alt="recap" class="standard_pic">
             <img src="plots/assim_Bench4_1.png" alt="recap" class="standard_pic">
+            <div>Benchmarks avec 1k exemples</div>
+            <img src="plots_prec/assim_Bench4_1.png" alt="recap" class="standard_pic">
         </div>
 
     </div>
@@ -161,6 +166,7 @@
     var single_revealer_button_text = document.getElementsByClassName("single_revealer_button")[0].getElementsByTagName("a")[0];
     var single_revealer_button_icon = document.getElementsByClassName("single_revealer_button")[0].getElementsByTagName("div")[0].getElementsByTagName("i")[0];
     const plots_path="plots/"
+    const plots_path_prec="plots_prec/"
     var single_images_revealer_open = false;
     var forecast_cheat = false;
     var forecast_cheat_1 = false;
@@ -230,6 +236,14 @@
         ajout_image(node,plots_path+mode_prev+"_histo_"+mode+"_"+noise_cheat+".png")
         ajout_image(node,plots_path+mode_prev+"_recap_"+mode+"_"+noise_cheat+".png")
 
+        let node_text=document.createElement("div");
+        //node_text.setAttribute("class","texte_method_overview");
+        node_text.innerHTML="Benchmarks avec 1k exemples";
+        node.appendChild(node_text);
+
+        ajout_image(node,plots_path_prec+mode_prev+"_recap_"+mode+"_"+noise_cheat+".png")
+
+
     }
 
     function update_images_method_overview_g(){
@@ -245,6 +259,13 @@
         }
         ajout_image(node,plots_path+mode_prev+"_Bench6_"+noise_cheat+".png")
         ajout_image(node,plots_path+mode_prev+"_Bench4_"+noise_cheat+".png")
+        //ajout d'un node avec du texte à node
+        let node_text=document.createElement("div");
+        node_text.setAttribute("class","texte_method_overview");
+        node_text.innerHTML="Benchmarks avec 1k exemples";
+        node.appendChild(node_text);
+        ajout_image(node,plots_path_prec+mode_prev+"_Bench6_"+noise_cheat+".png")
+        ajout_image(node,plots_path_prec+mode_prev+"_Bench4_"+noise_cheat+".png")
 
     }
 
